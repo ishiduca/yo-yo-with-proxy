@@ -58,6 +58,18 @@ document.body.appendChild(app('/'))
     - __hash__ to force using hashes
     - __history__ to force using __pushState__
 
+```js
+app = voodoo({count: 0}, (target, update) => new Proxy(target, {
+  get (target, prop) {
+    return target[proxy]
+  },
+  set (obj, prop, value) {
+    obj[prop] = value
+    update()
+  }
+}), {location: false})
+```
+
 ### app.use(apiFunction, opt)
 
 - `apiFunction(emitter, proxy, opt)`
@@ -65,9 +77,37 @@ document.body.appendChild(app('/'))
   - `proxy` proxy object using application.
 - `opt` passed to `apiFunction`
 
+```js
+app.use((emitter, proxy, opt) => {
+  emitter.on('putData', action => {
+    var id = String(Date.now())
+    var data = xtend(action, {id: id})
+    opt.storage.put(id, data, err => {
+      if (err) return console.error(err)
+      proxy.messages = [data].concat(proxy.messages)
+    })
+  })
+}, {storage: apiLocalStorage})
+```
+
 ### app.route(selector, handler)
 
-= `selector`
-- `handler`
+- `selector`
+- `handler(proxy, params, uri, actionsUp)`
+  - `proxy`
+  - `params`
+  - `uri`
+  - `actionsUp(actionType, value)`
+    - `actionType` __string__
+    - `value`
+
+```js
+app.route('/playlist/:genr', (proxy, params, uri, actionsUp) => html`
+  <div>
+    <p>${params.genr}</p>
+    <button onclick=${e => actionsUp('togglePlayState', e)}>${proxy.isPlayState}</button>
+  </div>
+`)
+```
 
 ### HTMLElement = app(route)
