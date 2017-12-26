@@ -2,7 +2,7 @@
 
 ### example
 
-js```
+```js
 var yo = require('./html')
 var voodoo = require('./voodoo')
 
