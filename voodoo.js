@@ -35,6 +35,7 @@ function voodoo (defaultData, handlers, _opt) {
   app.route = registerRoute
   app.use = registerApi
 
+//  emitter.on(UPDATE_DATA, update)
   emitter.on(LINK_ROUTE, function (link) {
     mountRoute(cURL(link))
   })
