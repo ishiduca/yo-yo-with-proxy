@@ -104,7 +104,7 @@ app.use((emitter, proxy) => {
     proxy.count += 1
     proxy.notify = {
       name: 'infomation',
-      message: 'count up
+      message: `count up "${proxy.count}"`
     }
 
     emitter.emit('resume')
