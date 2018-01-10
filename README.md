@@ -90,6 +90,28 @@ app.use((emitter, proxy, opt) => {
 }, {storage: apiLocalStorage})
 ```
 
+#### pause update and resume update.
+
+we will update the data, but to postpone DOM updates we emit `pause` and `resume`.
+when the emitter `emit("pause")`, updating of the DOM is stopped even if the data is updated.
+the emitter needs to `emit("resume")` in order to release update stop of this DOM.
+
+```js
+app.use((emitter, proxy) => {
+  emitter.on('count:inc', () => {
+    emitter.emit('pause')
+
+    proxy.count += 1
+    proxy.notify = {
+      name: 'infomation',
+      message: 'count up
+    }
+
+    emitter.emit('resume')
+  })
+})
+```
+
 ### app.route(selector, handler)
 
 - `selector`

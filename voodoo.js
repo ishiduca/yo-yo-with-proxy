@@ -25,6 +25,7 @@ function voodoo (defaultData, handlers, _opt) {
   var router = routington()
   var el
   var render
+  var block
 
   function app (u) {
     mountRoute(u)
@@ -35,7 +36,13 @@ function voodoo (defaultData, handlers, _opt) {
   app.route = registerRoute
   app.use = registerApi
 
-//  emitter.on(UPDATE_DATA, update)
+  emitter.on('pause', function () {
+    block = true
+  })
+  emitter.on('resume', function () {
+    block = false
+    update()
+  })
   emitter.on(LINK_ROUTE, function (link) {
     mountRoute(cURL(link))
   })
@@ -49,7 +56,7 @@ function voodoo (defaultData, handlers, _opt) {
 
   function updateData () {
     emitter.emit(UPDATE_DATA, proxy)
-    update()
+    block || update()
   }
 
   function update () {
